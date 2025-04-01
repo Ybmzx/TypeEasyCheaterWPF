@@ -260,7 +260,9 @@ namespace TypeEasyCheaterWPF.ViewModels
         {
             messageBoxService.Show($"TypeEasyCheaterWPF\n" +
                                     "Github@Ybmzx\n" +
-                                    "2025-04-01", "关于", MessageBoxButton.OK, MessageBoxImage.Information);
+                                    "2025-04-01\n" +
+                                    "本软件仅供学习交流使用, 请勿用于非法用途,\n" +
+                                    "如作它用所承受的法律责任一概与作者无关.", "关于", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         void LoadTypeEasyExePath(string typeEasyPath)
