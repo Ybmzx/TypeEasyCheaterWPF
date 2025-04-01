@@ -1,0 +1,121 @@
+﻿<Window x:Class="TypeEasyCheaterWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TypeEasyCheaterWPF"
+        xmlns:converters="clr-namespace:TypeEasyCheaterWPF.Converters"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance local:MainWindow,
+                                         IsDesignTimeCreatable=False}"
+        Icon="/Assets/cheater.ico"
+        Title="金山打字通 Cheater" Height="540" Width="960">
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <DockPanel Grid.Column="0">
+            <TextBlock DockPanel.Dock="Top">Scanned:</TextBlock>
+            <TextBox DockPanel.Dock="Top" Margin="0, 5" Text="{Binding ViewModel.SearchText, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <ListBox ItemsSource="{Binding ViewModel.PathsAndCourseNamesView, Mode=OneWay}" SelectedItem="{Binding ViewModel.SelectedPathAndCourseName}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <Run Text="{Binding Value, Mode=OneWay}"/>
+                            <Run Text="{Binding Key, Mode=OneWay}" FontSize="10"/>
+                        </TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+        <GridSplitter Width="3" Margin="-10"></GridSplitter>
+        <Grid Grid.Column="1" Margin="20, 0, 0, 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <DockPanel Margin="20, 0">
+                <TextBlock Visibility="{Binding ViewModel.TypeEasyPathInvalid, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" DockPanel.Dock="Left" Foreground="Red" FontStyle="Italic" VerticalAlignment="Center" Margin="5,0">
+                    (*Required)
+                </TextBlock>
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">
+                    金山打字通路径:
+                </TextBlock>
+                <Button DockPanel.Dock="Right" Margin="5, 5" Command="{Binding ViewModel.OpenTypeEasyExeFileDialogCommand}" Width="28">选择</Button>
+                <TextBox Margin="5, 5" IsReadOnly="True" Text="{Binding ViewModel.TypeEasyPath}"/>
+            </DockPanel>
+            <GroupBox Margin="0, 5" Grid.Row="1" Header="快速输入部分">
+                <DockPanel Margin="5" LastChildFill="False">
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">文章 (在左侧选择):</TextBlock>
+                        <TextBox Margin="5, 5" Padding="3" IsReadOnly="True" Text="{Binding ViewModel.SelectedPathAndCourseName.Key, Mode=OneWay}"/>
+                    </DockPanel>
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">输入间隔时间 (秒):</TextBlock>
+                        <TextBox Margin="5, 5" Padding="3" Text="{Binding ViewModel.InputDelay}"/>
+                    </DockPanel>
+                    <ProgressBar DockPanel.Dock="Top" Height="20" Margin="10, 0" Value="{Binding ViewModel.ProgressValue}"></ProgressBar>
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button DockPanel.Dock="Left" Grid.Column="0" Margin="10" Command="{Binding ViewModel.StartCheatingCommand}">开始 (3 秒倒计时)</Button>
+                        <Button DockPanel.Dock="Left" Grid.Column="1" Margin="10" Command="{Binding ViewModel.StopCheatingCommand}">停止</Button>
+                    </Grid>
+                </DockPanel>
+            </GroupBox>
+            <GroupBox Grid.Row="2" Header="修改最新记录部分" Margin="0, 5">
+                <DockPanel Margin="10" LastChildFill="False">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Margin="5,0" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">原时间:</TextBlock>
+                        <TextBox Margin="5, 5" Padding="3" Grid.Column="1" Grid.Row="0" Text="{Binding ViewModel.OriginalTimeStr}"/>
+                        <TextBlock Margin="5,0" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center">原速度:</TextBlock>
+                        <TextBox Margin="5, 5" Padding="3" Grid.Column="3" Grid.Row="0"  Text="{Binding ViewModel.OriginalSpeedStr}"/>
+
+                        <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4">
+                            <TextBlock ToolTip="此功能需要选择 TypeEasy.exe 和文章后才能使用" Visibility="{Binding ViewModel.CoursePathInvalid, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" DockPanel.Dock="Left" Foreground="Red" FontStyle="Italic" VerticalAlignment="Center" Margin="5,0">
+                                *
+                            </TextBlock>
+                            <TextBlock Margin="5,0" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" DockPanel.Dock="Left">通过速度自动计算修改时间和速度:</TextBlock>
+                            <TextBlock VerticalAlignment="Center" DockPanel.Dock="Right">字/分</TextBlock>
+                            <TextBox Margin="5, 5" Padding="3" Text="{Binding ViewModel.WantedSpeedAutoCalc, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DockPanel>
+
+
+                        <TextBlock Margin="5,0" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center">修改时间为:</TextBlock>
+                        <TextBox Margin="5, 5" Padding="3" Grid.Column="1" Grid.Row="2" Text="{Binding ViewModel.WantedTimeStr}"/>
+                        <TextBlock Margin="5,0" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center">修改速度为:</TextBlock>
+                        <TextBox Margin="5, 5" Padding="3" Grid.Column="3" Grid.Row="2" Text="{Binding ViewModel.WantedSpeedStr, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Grid.Row="3" Grid.ColumnSpan="2" Margin="5" Command="{Binding ViewModel.ModifyProgramRecordCommand}">修改程序记录</Button>
+                        <Button Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" Command="{Binding ViewModel.ModifyLastRecordCommand}">
+                            <TextBlock>
+                                修改文件记录
+                                ( 从 "修改速度为" 解析出的速度: <Run Foreground="#FF3BAEFF" d:Text="123" Text="{Binding ViewModel.DetectedSpeed, Mode=OneWay}"/> )
+                            </TextBlock>
+                        </Button>
+                    </Grid>
+                </DockPanel>
+            </GroupBox>
+            <Button Grid.Row="3" Margin="5" Width="100" HorizontalAlignment="Right" Command="{Binding ViewModel.ShowAboutInfoCommand}">About</Button>
+        </Grid>
+    </Grid>
+</Window>
