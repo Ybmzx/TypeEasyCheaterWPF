@@ -1,0 +1,31 @@
+﻿<Window x:Class="TypeEasyCheaterWPF.Views.SelectMidwayPositionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TypeEasyCheaterWPF.Views"
+        mc:Ignorable="d"
+        Title="选择从何处开始" Height="450" Width="800" Closing="Window_Closing">
+    <DockPanel Margin="10">
+        <UniformGrid DockPanel.Dock="Bottom" Rows="1">
+            <Button IsCancel="True" Margin="5" Name="CancelButton" Click="CancelButton_Click">取消</Button>
+            <Button IsDefault="True" Margin="5" Name="AcceptButton" Click="AcceptButton_Click">确定并开始 (3 秒倒计时)</Button>
+        </UniformGrid>
+        <TextBlock DockPanel.Dock="Bottom" FontFamily="Consolas">
+            ...
+            <Run Foreground="Gray" Name="SelectedLeft" TextDecorations="Underline">123</Run>
+            <Run Foreground="LightPink" FontSize="10">从此处开始</Run>
+            <Run Foreground="LightPink">--></Run>
+            <Run Foreground="SkyBlue" Name="SelectedRight" TextDecorations="Underline">123</Run>
+            ...
+        </TextBlock>
+        <TextBox FontSize="18" 
+                 Margin="0, 10"
+                 Name="ArticleTextBox"
+                 SelectionChanged="ArticleTextBox_SelectionChanged"
+                 IsReadOnly="True"
+                 IsReadOnlyCaretVisible="True"
+                 FontFamily="Consolas"
+                 TextWrapping="Wrap"></TextBox>
+    </DockPanel>
+</Window>

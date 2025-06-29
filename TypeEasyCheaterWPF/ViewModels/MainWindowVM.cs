@@ -25,12 +25,14 @@ namespace TypeEasyCheaterWPF.ViewModels
         private ISettingService settingService;
         private ITypeEasyProgramMemoryModifyService typeEasyProgramMemoryModifyService;
         private ITypeEasyRecordModifyService typeEasyRecordModifyService;
+        private ISelectMidwayPositionWindowService selectMidwayService;
         public MainWindowVM(IFileDialogService fileDialogService,
                             IMessageBoxService messageBoxService,
                             ITypeEasyCoursesService typeEasyCoursesService,
                             ISettingService settingService,
                             ITypeEasyProgramMemoryModifyService typeEasyProgramMemoryModifyService,
-                            ITypeEasyRecordModifyService typeEasyRecordModifyService)
+                            ITypeEasyRecordModifyService typeEasyRecordModifyService,
+                            ISelectMidwayPositionWindowService selectMidwayService)
         {
             this.fileDialogService = fileDialogService;
             this.messageBoxService = messageBoxService;
@@ -38,6 +40,8 @@ namespace TypeEasyCheaterWPF.ViewModels
             this.settingService = settingService;
             this.typeEasyProgramMemoryModifyService = typeEasyProgramMemoryModifyService;
             this.typeEasyRecordModifyService = typeEasyRecordModifyService;
+            this.selectMidwayService = selectMidwayService;
+
             PathsAndCourseNamesView = CollectionViewSource.GetDefaultView(_pathsAndCourseNames);
             PathsAndCourseNamesView.Filter = (item) =>
             {
@@ -49,7 +53,6 @@ namespace TypeEasyCheaterWPF.ViewModels
             LoadTypeEasyExePath(TypeEasyPath);
 
             InputDelay = settingService.Setting.InputDelay;
-
         }
 
         [ObservableProperty]
@@ -57,7 +60,13 @@ namespace TypeEasyCheaterWPF.ViewModels
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartCheatingCommand))]
+        [NotifyCanExecuteChangedFor(nameof(StartCheatingFromHalfwayCommand))]
         bool _typeEasyPathInvalid = true;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(StartCheatingCommand))]
+        [NotifyCanExecuteChangedFor(nameof(StartCheatingFromHalfwayCommand))]
+        bool _isCheating = false;
 
         List<KeyValuePair<string, string>> _pathsAndCourseNames = new();
 
@@ -69,6 +78,7 @@ namespace TypeEasyCheaterWPF.ViewModels
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartCheatingCommand))]
+        [NotifyCanExecuteChangedFor(nameof(StartCheatingFromHalfwayCommand))]
         KeyValuePair<string, string> _selectedPathAndCourseName;
 
         partial void OnSearchTextChanged(string value) => PathsAndCourseNamesView.Refresh();
@@ -82,7 +92,7 @@ namespace TypeEasyCheaterWPF.ViewModels
         [ObservableProperty]
         bool _coursePathInvalid = true;
 
-        private bool CanStartCheating() => !TypeEasyPathInvalid && File.Exists(SelectedPathAndCourseName.Key);
+        private bool CanStartCheating() => !TypeEasyPathInvalid && File.Exists(SelectedPathAndCourseName.Key) && !IsCheating;
 
         [ObservableProperty]
         double _inputDelay = 0.01;
@@ -130,7 +140,7 @@ namespace TypeEasyCheaterWPF.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanStartCheating))]
-        async Task StartCheating()
+        private async Task StartCheating()
         {
             var content = typeEasyCoursesService.GetContent(SelectedPathAndCourseName.Key);
 
@@ -138,6 +148,37 @@ namespace TypeEasyCheaterWPF.ViewModels
 
             OriginalSpeedStr = $"{speedPerSencond * 60}字/分";
             OriginalTimeStr = new TimeSpan(0, 0, (int)(content.Length / speedPerSencond)).ToString();
+            await Cheating(content);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanStartCheating))]
+        private async Task StartCheatingFromHalfway()
+        {
+            var content = typeEasyCoursesService.GetContent(SelectedPathAndCourseName.Key);
+
+            int? result = selectMidwayService.ShowDialog(content);
+
+            if (result is null)
+            {
+                return;
+            }
+
+            content = content.Substring((int)result);
+
+            var speedPerSencond = InputDelay == 0 ? content.Length : 1d / InputDelay;
+
+            OriginalSpeedStr = $"unknown字/分";
+            OriginalTimeStr = new TimeSpan(0, 0, 0).ToString();
+            await Cheating(content);
+        }
+
+        private async Task Cheating(string content)
+        {
+            if (IsCheating) return;
+
+            StopCheating();
+
+            IsCheating = true;
 
             _cheatingCts = new();
 
@@ -169,6 +210,7 @@ namespace TypeEasyCheaterWPF.ViewModels
             {
                 _cheatingCts.Dispose();
                 _cheatingCts = null;
+                IsCheating = false;
                 progress.Report(100);
             }
         }
@@ -259,8 +301,8 @@ namespace TypeEasyCheaterWPF.ViewModels
         void ShowAboutInfo()
         {
             messageBoxService.Show($"TypeEasyCheaterWPF\n" +
-                                    "Github@Ybmzx\n" +
-                                    "2025-04-01\n" +
+                                    "Github@Ybmzx - https://github.com/Ybmzx\n" +
+                                   $"编译时间: {BuildInfo.CompileTime}\n" +
                                     "本软件仅供学习交流使用, 请勿用于非法用途,\n" +
                                     "如作它用所承受的法律责任一概与作者无关.", "关于", MessageBoxButton.OK, MessageBoxImage.Information);
         }

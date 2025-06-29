@@ -36,6 +36,7 @@ namespace TypeEasyCheaterWPF
             services.AddSingleton<ISettingService, XmlSettingService>(x => new XmlSettingService("conf.xml"));
             services.AddSingleton<ITypeEasyProgramMemoryModifyService, TypeEasyProgramMemoryModifyService>();
             services.AddSingleton<ITypeEasyRecordModifyService, TypeEasyRecordModifyService>();
+            services.AddSingleton<ISelectMidwayPositionWindowService, SelectMidwayPositionWindowService>();
 
             return services.BuildServiceProvider();
         }

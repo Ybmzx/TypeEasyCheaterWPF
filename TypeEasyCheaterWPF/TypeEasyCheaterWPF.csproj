@@ -1,5 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Target Name="GenerateBuildInfo" BeforeTargets="BeforeBuild">
+    <PropertyGroup>
+      <CompileTime>$([System.DateTime]::Now.ToString("yyyy-MM-dd HH:mm:ss"))</CompileTime>
+      <BuildInfoContent>
+// Auto-generated file. Do not edit.
+public static class BuildInfo
+{
+    public static readonly DateTime CompileTime = DateTime.Parse("$(CompileTime)")%3B
+}
+      </BuildInfoContent>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(ProjectDir)BuildInfo.cs" Lines="$(BuildInfoContent)" Overwrite="true" Encoding="Unicode" />
+  </Target>
+  
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
@@ -29,5 +44,4 @@
   <ItemGroup>
     <Resource Include="Assets\cheater.ico" />
   </ItemGroup>
-
 </Project>

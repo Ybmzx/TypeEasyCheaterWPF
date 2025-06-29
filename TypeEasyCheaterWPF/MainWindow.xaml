@@ -65,9 +65,11 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button DockPanel.Dock="Left" Grid.Column="0" Margin="10" Command="{Binding ViewModel.StartCheatingCommand}">开始 (3 秒倒计时)</Button>
-                        <Button DockPanel.Dock="Left" Grid.Column="1" Margin="10" Command="{Binding ViewModel.StopCheatingCommand}">停止</Button>
+                        <Button DockPanel.Dock="Left" Grid.Column="0" Margin="10" Command="{Binding ViewModel.StartCheatingFromHalfwayCommand}">从中途开始 (3 秒倒计时)</Button>
+                        <Button DockPanel.Dock="Left" Grid.Column="1" Margin="10" Command="{Binding ViewModel.StartCheatingCommand}">从头开始 (3 秒倒计时)</Button>
+                        <Button DockPanel.Dock="Left" Grid.Column="2" Margin="10" Command="{Binding ViewModel.StopCheatingCommand}">停止</Button>
                     </Grid>
                 </DockPanel>
             </GroupBox>
